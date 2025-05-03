@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تعديل المنتج</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <h1>✏️ تعديل منتج</h1>
+        <form method="POST">
+            <input type="text" name="name" value="{{ product.name }}" placeholder="اسم المنتج" required>
+            <input type="number" name="quantity" value="{{ product.quantity }}" placeholder="الكمية" required>
+            <input type="text" name="supplier" value="{{ product.supplier }}" placeholder="اسم المورد" required>
+            <input type="date" name="expiration_date" value="{{ product.expiration_date }}" placeholder="تاريخ الانتهاء"
+                required>
+            <button type="submit" class="btn">تعديل</button>
+            <a href="{{ url_for('index') }}" class="btn">رجوع</a>
+        </form>
+    </div>
+</body>
+
+</html>

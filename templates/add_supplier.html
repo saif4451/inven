@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <title>إضافة مورد</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <h1>➕ إضافة مورد جديد</h1>
+        <form method="POST">
+            <input type="text" name="name" placeholder="اسم المورد" required>
+            <input type="text" name="phone" placeholder="رقم الهاتف">
+            <input type="email" name="email" placeholder="البريد الإلكتروني">
+            <button type="submit" class="btn">إضافة</button>
+            <a href="{{ url_for('suppliers') }}" class="btn">رجوع</a>
+        </form>
+    </div>
+</body>
+
+</html>

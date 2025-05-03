@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة المنتجات</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🏪 إدارة المنتجات</h1>
+            <div class="nav">
+                <a href="{{ url_for('add_product') }}" class="btn">➕ إضافة منتج</a>
+                <a href="{{ url_for('suppliers') }}" class="btn">🏢 الموردين</a>
+            </div>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <ul class="flashes">
+            {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+
+        <table>
+            <thead>
+                <tr>
+                    <th>الاسم</th>
+                    <th>الكمية</th>
+                    <th>المورد</th>
+                    <th>تاريخ الانتهاء</th>
+                    <th>إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.quantity }}</td>
+                    <td>{{ product.supplier }}</td>
+                    <td>{{ product.expiration_date }}</td>
+                    <td>
+                        <a href="{{ url_for('edit_product', id=product.id) }}" class="btn small">✏️ تعديل</a>
+                        <a href="{{ url_for('delete_product', id=product.id) }}" class="btn small danger">🗑️ حذف</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>
