@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الحسابات</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>الحسابات</h1>
+            <div>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAccountModal">
+                    إضافة حساب جديد
+                </button>
+                <a href="/" class="btn btn-secondary">العودة للرئيسية</a>
+            </div>
+        </div>
+
+        <!-- ملخص الحسابات -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">إجمالي الديون</h5>
+                        <p class="card-text h3">{{ total_debt }} جنيه</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">إجمالي المدفوعات</h5>
+                        <p class="card-text h3">{{ total_payments }} جنيه</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- جدول الحسابات -->
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>التاريخ</th>
+                        <th>اسم العميل</th>
+                        <th>المبلغ</th>
+                        <th>النوع</th>
+                        <th>الحالة</th>
+                        <th>الوصف</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for account in accounts %}
+                    <tr>
+                        <td>{{ account.date }}</td>
+                        <td>{{ account.customer_name }}</td>
+                        <td>{{ account.amount }} جنيه</td>
+                        <td>{{ 'دين' if account.type == 'debt' else 'دفعة' }}</td>
+                        <td>
+                            <span class="badge {{ 'bg-success' if account.status == 'paid' else 'bg-warning' }}">
+                                {{ 'تم السداد' if account.status == 'paid' else 'قيد الانتظار' }}
+                            </span>
+                        </td>
+                        <td>{{ account.description }}</td>
+                        <td>
+                            {% if account.type == 'debt' and account.status == 'pending' %}
+                            <a href="{{ url_for('mark_paid', account_id=account.id) }}" class="btn btn-success btn-sm">
+                                تم السداد
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal إضافة حساب جديد -->
+    <div class="modal fade" id="addAccountModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">إضافة حساب جديد</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="POST" action="{{ url_for('add_account') }}">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="customer_name" class="form-label">اسم العميل</label>
+                            <input type="text" class="form-control" id="customer_name" name="customer_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="amount" class="form-label">المبلغ</label>
+                            <input type="number" class="form-control" id="amount" name="amount" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="type" class="form-label">النوع</label>
+                            <select class="form-select" id="type" name="type" required>
+                                <option value="debt">دين</option>
+                                <option value="payment">دفعة</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">الوصف</label>
+                            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                        <button type="submit" class="btn btn-primary">حفظ</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer mt-5 py-3 bg-light">
+        <div class="container text-center">
+            <span class="text-muted">Developed by Saif Moamer</span>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
