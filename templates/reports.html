@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>التقارير والإحصائيات</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <h1>التقارير والإحصائيات</h1>
+
+        <!-- إحصائيات عامة -->
+        <div class="summary-cards">
+            <div class="summary-card">
+                <h3>إجمالي المنتجات</h3>
+                <p>{{ products_stats.total_products }} منتج</p>
+            </div>
+            <div class="summary-card">
+                <h3>إجمالي الكمية</h3>
+                <p>{{ products_stats.total_quantity }} قطعة</p>
+            </div>
+            <div class="summary-card">
+                <h3>القيمة الإجمالية</h3>
+                <p>{{ "%.2f"|format(products_stats.total_value) }} جنيه</p>
+            </div>
+        </div>
+
+        <!-- المنتجات قليلة الكمية -->
+        <div class="section">
+            <h2>المنتجات قليلة الكمية</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>المنتج</th>
+                        <th>الكمية</th>
+                        <th>المورد</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in low_stock %}
+                    <tr>
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.quantity }}</td>
+                        <td>{{ product.supplier }}</td>
+                        <td>
+                            <a href="{{ url_for('edit_product', id=product.id) }}" class="btn btn-sm">تعديل</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- المنتجات التي على وشك الانتهاء -->
+        <div class="section">
+            <h2>المنتجات التي على وشك الانتهاء</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>المنتج</th>
+                        <th>تاريخ الانتهاء</th>
+                        <th>الكمية</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in expiring_soon %}
+                    <tr>
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.expiration_date }}</td>
+                        <td>{{ product.quantity }}</td>
+                        <td>
+                            <a href="{{ url_for('edit_product', id=product.id) }}" class="btn btn-sm">تعديل</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- أفضل المنتجات مبيعاً -->
+        <div class="section">
+            <h2>أفضل المنتجات مبيعاً</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>المنتج</th>
+                        <th>الكمية المباعة</th>
+                        <th>إجمالي الإيرادات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in top_selling %}
+                    <tr>
+                        <td>{{ product[0] }}</td>
+                        <td>{{ product[1] }} قطعة</td>
+                        <td>{{ "%.2f"|format(product[2]) }} جنيه</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- المنتجات المضافة حديثاً -->
+        <div class="section">
+            <h2>المنتجات المضافة حديثاً</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>المنتج</th>
+                        <th>المورد</th>
+                        <th>الكمية</th>
+                        <th>تاريخ الإضافة</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in recent_products %}
+                    <tr>
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.supplier }}</td>
+                        <td>{{ product.quantity }}</td>
+                        <td>{{ product.received_date }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="navigation-buttons">
+            <a href="{{ url_for('index') }}" class="btn">🏠 الصفحة الرئيسية</a>
+            <a href="{{ url_for('products') }}" class="btn">📦 قائمة المنتجات</a>
+            <a href="{{ url_for('history') }}" class="btn">📊 سجل المبيعات</a>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -11,15 +11,18 @@
         .nav-buttons {
             display: flex;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         .table-container {
             margin-top: 20px;
+            overflow-x: auto;
         }
 
         .table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 20px;
         }
 
         .table th,
@@ -31,11 +34,16 @@
 
         .table th {
             background-color: #f8f9fa;
+            font-weight: bold;
         }
 
         .btn-group {
             display: flex;
-            gap: 10px;
+            gap: 5px;
+        }
+
+        .alert {
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -46,9 +54,9 @@
             <h1>نظام إدارة السوبر ماركت</h1>
             <div class="nav-buttons">
                 <a href="{{ url_for('add_product') }}" class="btn btn-primary">➕ إضافة منتج</a>
-                <a href="{{ url_for('suppliers') }}" class="btn btn-info">🏢 الموردين</a>
-                <a href="{{ url_for('history') }}" class="btn btn-success">📊 سجل المبيعات</a>
-                <a href="{{ url_for('accounts') }}" class="btn btn-warning">💰 الحسابات</a>
+                <a href="{{ url_for('add_sale') }}" class="btn btn-success">💰 إضافة مبيعات</a>
+                <a href="{{ url_for('history') }}" class="btn btn-info">📊 تاريخ المبيعات</a>
+                <a href="{{ url_for('reports') }}" class="btn btn-secondary">📈 التقارير</a>
             </div>
         </div>
 
@@ -63,12 +71,16 @@
         {% endwith %}
 
         <div class="table-container">
+            <h2>قائمة المنتجات</h2>
+            {% if products %}
             <table class="table">
                 <thead>
                     <tr>
-                        <th>الاسم</th>
+                        <th>المنتج</th>
+                        <th>السعر</th>
                         <th>الكمية</th>
                         <th>المورد</th>
+                        <th>تاريخ الإضافة</th>
                         <th>تاريخ الانتهاء</th>
                         <th>الإجراءات</th>
                     </tr>
@@ -77,22 +89,50 @@
                     {% for product in products %}
                     <tr>
                         <td>{{ product.name }}</td>
+                        <td>{{ "%.2f"|format(product.price) }} جنيه</td>
                         <td>{{ product.quantity }}</td>
-                        <td>{{ product.supplier }}</td>
-                        <td>{{ product.expiration_date }}</td>
+                        <td>{{ product.supplier or '-' }}</td>
+                        <td>{{ product.received_date or '-' }}</td>
+                        <td>{{ product.expiration_date or '-' }}</td>
                         <td>
                             <div class="btn-group">
                                 <a href="{{ url_for('edit_product', id=product.id) }}" class="btn btn-sm btn-primary">✏️
                                     تعديل</a>
-                                <a href="{{ url_for('delete_product', id=product.id) }}"
-                                    class="btn btn-sm btn-danger">🗑️ حذف</a>
+                                <button onclick="deleteProduct({{ product.id }})" class="btn btn-sm btn-danger">🗑️
+                                    حذف</button>
                             </div>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
+            {% else %}
+            <div class="alert alert-info">
+                لا توجد منتجات في المخزن. يمكنك إضافة منتجات جديدة من خلال زر "إضافة منتج".
+            </div>
+            {% endif %}
         </div>
+
+        <script>
+            function deleteProduct(id) {
+                if (confirm('هل أنت متأكد من حذف هذا المنتج؟')) {
+                    fetch(`/delete_product/${id}`, {
+                        method: 'DELETE'
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                window.location.reload();
+                            } else {
+                                alert(data.message);
+                            }
+                        })
+                        .catch(error => {
+                            alert('حدث خطأ: ' + error);
+                        });
+                }
+            }
+        </script>
 
         <footer class="footer mt-5 py-3 bg-light">
             <div class="container text-center">
